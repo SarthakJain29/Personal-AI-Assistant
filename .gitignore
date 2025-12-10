@@ -10,6 +10,8 @@ dist
 coverage
 *.lcov
 
+tokens.json
+
 # logs
 logs
 _.log
