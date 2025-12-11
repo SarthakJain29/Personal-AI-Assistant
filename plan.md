@@ -12,6 +12,6 @@
 
 [v] Test the agent
 
-[] Add UI (terminal/frontend)
+[v] Add UI (terminal/frontend)
 
 [] Add the memory

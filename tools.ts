@@ -1,11 +1,17 @@
 import { tool } from "@langchain/core/tools";
 import z from "zod";
-import { oauth2Client } from "./server";
 import { google } from "googleapis";
 import tokens from "./tokens.json";
 import type { EventData } from "./utils/types";
 
+export const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_REDIRECT_URL
+);
+
 const calendar = google.calendar({ version: "v3", auth: oauth2Client }); //calendar instance
+
 
 oauth2Client.setCredentials(tokens);
 

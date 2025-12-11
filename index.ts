@@ -1,3 +1,4 @@
+import readline from "node:readline/promises";
 import { ChatGroq } from "@langchain/groq";
 import { createEvent, deleteEvent, getEvents } from "./tools";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
@@ -46,9 +47,20 @@ const graph = new StateGraph(MessagesAnnotation)
 const agent = graph.compile();
 
 async function main() {
-  const result = await agent.invoke({
-    messages: [
-      { role: "system", content: `You are a personal assistant that helps users manage their Google Calendar.
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  while (true) {
+    const userInput = await rl.question("You: ");
+    if (userInput === "bye") break;
+
+    const result = await agent.invoke({
+      messages: [
+        {
+          role: "system",
+          content: `You are a personal assistant that helps users manage their Google Calendar.
       You have access to these tools: 
       getEvents for retrieving events,
       createEvent for creating new events,
@@ -70,13 +82,20 @@ async function main() {
       Response Format:
       Present answers in a clean, structured, and readable format (sections, bullet points, or short steps).
       current date and time: ${new Date().toUTCString()}
-      TimeZone: Asia/Kolkata (UTC+5:30)` },
+      TimeZone: Asia/Kolkata (UTC+5:30)`,
+        },
 
-      { role: "user", content: "Delete my design talk meeting today in the evening" },
-    ],
-  });
+        {
+          role: "user",
+          content: userInput,
+        },
+      ],
+    });
 
-  console.log("AI: ", result.messages[result.messages.length - 1]?.content);
+    console.log("AI: ", result.messages[result.messages.length - 1]?.content);
+  }
+
+  rl.close();
 }
 
 main();
