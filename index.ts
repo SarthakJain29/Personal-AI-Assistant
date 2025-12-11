@@ -7,6 +7,7 @@ import {
   START,
   StateGraph,
   MessagesAnnotation,
+  MemorySaver,
 } from "@langchain/langgraph";
 import type { AIMessage } from "@langchain/core/messages";
 
@@ -44,9 +45,13 @@ const graph = new StateGraph(MessagesAnnotation)
     tools: "tools",
   });
 
-const agent = graph.compile();
+const checkpointer = new MemorySaver();
+
+const agent = graph.compile({ checkpointer });
 
 async function main() {
+  let config = { configurable: { thread_id: "1" } };
+
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -56,11 +61,12 @@ async function main() {
     const userInput = await rl.question("You: ");
     if (userInput === "bye") break;
 
-    const result = await agent.invoke({
-      messages: [
-        {
-          role: "system",
-          content: `You are a personal assistant that helps users manage their Google Calendar.
+    const result = await agent.invoke(
+      {
+        messages: [
+          {
+            role: "system",
+            content: `You are a personal assistant that helps users manage their Google Calendar.
       You have access to these tools: 
       getEvents for retrieving events,
       createEvent for creating new events,
@@ -83,14 +89,15 @@ async function main() {
       Present answers in a clean, structured, and readable format (sections, bullet points, or short steps).
       current date and time: ${new Date().toUTCString()}
       TimeZone: Asia/Kolkata (UTC+5:30)`,
-        },
-
-        {
-          role: "user",
-          content: userInput,
-        },
-      ],
-    });
+          },
+          {
+            role: "user",
+            content: userInput,
+          },
+        ],
+      },
+      config
+    );
 
     console.log("AI: ", result.messages[result.messages.length - 1]?.content);
   }
