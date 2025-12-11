@@ -1,5 +1,5 @@
 import { ChatGroq } from "@langchain/groq";
-import { createEvent, getEvents } from "./tools";
+import { createEvent, deleteEvent, getEvents } from "./tools";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import {
   END,
@@ -9,7 +9,7 @@ import {
 } from "@langchain/langgraph";
 import type { AIMessage } from "@langchain/core/messages";
 
-const tools = [createEvent, getEvents];
+const tools = [createEvent, getEvents, deleteEvent];
 
 const toolNode = new ToolNode(tools);
 
@@ -49,21 +49,30 @@ async function main() {
   const result = await agent.invoke({
     messages: [
       { role: "system", content: `You are a personal assistant that helps users manage their Google Calendar.
-      You have access to two tools: getEvents for retrieving events and createEvent for creating new events.
+      You have access to these tools: 
+      getEvents for retrieving events,
+      createEvent for creating new events,
+      calendar_delete_event_by_id for deleting an event
 
-      Your Responsibilities:-
+      if the user says to delete or remove an event by name or time, you must first use getEvents tool to find the eventId
+      You must never call the calendar_delete_event_by_id tool without having the eventId 
+
+      Example:
+      User: "Delete my design meeting at 3pm today"
+      Assistant: 
+      1. Call getEvents to retrieve events around 3pm.
+      2. Identify the event and extract eventId: "abc123".
+      3. Call delete-event tool with: { "eventId": "abc123" }.
 
       Use the provided tools whenever the user asks to view or create calendar events.
       Ask for clarification when event details are incomplete or ambiguous.
 
-      Behavior Rules:-
-
-      Be concise, friendly, and efficient.
-      Never invent or assume events that do not come from the user or tool results.
-
       Response Format:
-      Present answers in a clean, structured, and readable format (sections, bullet points, or short steps).` },
-      { role: "user", content: "Do I have any meetings today?" },
+      Present answers in a clean, structured, and readable format (sections, bullet points, or short steps).
+      current date and time: ${new Date().toUTCString()}
+      TimeZone: Asia/Kolkata (UTC+5:30)` },
+
+      { role: "user", content: "Delete my design talk meeting today in the evening" },
     ],
   });
 

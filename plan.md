@@ -6,11 +6,11 @@
 
 [v] Setup the tools - create event, get event
 
-[] Build graph
+[v] Build graph
 
-[] Implement the tools - connect to google calendar
+[v] Implement the tools - connect to google calendar
 
-[] Test the agent
+[v] Test the agent
 
 [] Add UI (terminal/frontend)
 
