@@ -8,7 +8,7 @@ dotenv.config();
 const app: Express = express();
 const PORT = 3000;
 
-const oauth2Client = new google.auth.OAuth2(
+export const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URL
@@ -33,8 +33,8 @@ app.get("/callback", async (req: Request, res: Response) => {
 
   //now sending code + client id + secret to receive access & refresh tokens
   const { tokens } = await oauth2Client.getToken(code);
-  console.log("Tokens", tokens);
-
+  oauth2Client.setCredentials(tokens); //setting the credentials
+  res.json({message: "Connected ✅"})
   console.log("Connected ✅");
 });
 
