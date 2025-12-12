@@ -35,7 +35,6 @@ app.get("/callback", async (req: Request, res: Response) => {
   const { tokens } = await oauth2Client.getToken(code);
   oauth2Client.setCredentials(tokens); //setting the credentials
   res.json({message: "Connected ✅"})
-  console.log("Connected ✅");
 });
 
 app.listen(PORT, () => console.log(`Server is running on PORT: ${PORT}`));

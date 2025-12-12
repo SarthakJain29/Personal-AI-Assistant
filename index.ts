@@ -1,6 +1,6 @@
 import readline from "node:readline/promises";
 import { ChatGroq } from "@langchain/groq";
-import { createEvent, deleteEvent, getEvents } from "./tools";
+import { createEvent, cancelEvent, getEvents } from "./tools";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import {
   END,
@@ -11,7 +11,7 @@ import {
 } from "@langchain/langgraph";
 import type { AIMessage } from "@langchain/core/messages";
 
-const tools = [createEvent, getEvents, deleteEvent];
+const tools = [createEvent, getEvents, cancelEvent];
 
 const toolNode = new ToolNode(tools);
 
@@ -70,7 +70,7 @@ async function main() {
       You have access to these tools: 
       getEvents for retrieving events,
       createEvent for creating new events,
-      calendar_delete_event_by_id for deleting an event
+      cancelEvent for deleting an event by EventId
 
       if the user says to delete or remove an event by name or time, you must first use getEvents tool to find the eventId
       You must never call the calendar_delete_event_by_id tool without having the eventId 

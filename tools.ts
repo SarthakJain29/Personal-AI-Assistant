@@ -1,7 +1,7 @@
 import { tool } from "@langchain/core/tools";
 import z from "zod";
 import { google } from "googleapis";
-import tokens from "./tokens.json";
+//import tokens from "./tokens.json";
 import type { EventData } from "./utils/types";
 
 export const oauth2Client = new google.auth.OAuth2(
@@ -13,7 +13,10 @@ export const oauth2Client = new google.auth.OAuth2(
 const calendar = google.calendar({ version: "v3", auth: oauth2Client }); //calendar instance
 
 
-oauth2Client.setCredentials(tokens);
+oauth2Client.setCredentials({
+  access_token: process.env.GOOGLE_ACCESS_TOKEN,
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+})
 
 export const getEvents = tool(
   async (params) => {
@@ -149,7 +152,7 @@ export const createEvent = tool(
   }
 );
 
-export const deleteEvent = tool(
+export const cancelEvent = tool(
   async (eventId) => {
     try {
       const response = await calendar.events.delete({
@@ -165,7 +168,7 @@ export const deleteEvent = tool(
     return "Failed to connect to the calendar";
   }, 
   {
-    name: "calendar_delete_event_by_id",
+    name: "cancel-calendar-event",
     description: `Use this tool ONLY when you already have the eventId. 
       You MUST NEVER call this tool using only the event name, date, or time.
 
