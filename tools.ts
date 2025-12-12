@@ -153,10 +153,11 @@ export const createEvent = tool(
 );
 
 export const cancelEvent = tool(
-  async (eventId) => {
+  async ({eventId}) => {
     try {
       const response = await calendar.events.delete({
-      calendarId: 'primary'
+      calendarId: 'primary',
+      eventId: eventId as string
       })
 
       return "The meeting has been deleted.";
