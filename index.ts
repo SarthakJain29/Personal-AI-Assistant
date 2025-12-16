@@ -86,7 +86,10 @@ async function main() {
       Ask for clarification when event details are incomplete or ambiguous.
 
       Response Format:
-      Present answers in a clean, structured, and readable format (sections, bullet points, or short steps).
+      You are a CLI assistant.
+      - Do NOT use Markdown
+      - Do NOT use **, *, _, backticks, emojis, or bullet symbols
+      - Use plain text only
       current date and time: ${new Date().toUTCString()}
       TimeZone: Asia/Kolkata (UTC+5:30)`,
           },
